@@ -3,11 +3,11 @@
 #------------------------------------------------------------------------------
 # Autor: Valentine
 #------------------------------------------------------------------------------
-# Versão: 1.1
+# Versão: 1.2
 #==============================================================================
 
 module Mouse_Configs
-  # Índice no IconSet.png do ícone do cursor do mouse
+  # Índice no IconSet.png do ícone do cursor
   CURSOR_ICON = 147
   
   # Opacidade do cursor (de 0 a 255)
@@ -18,13 +18,29 @@ end
 # ** Mouse
 #==============================================================================
 module Mouse
-  # Esconde o ícone original do cursor
-  Win32API.new('user32', 'ShowCursor', 'I', 'I').call(0)
+  class << self
+    attr_reader   :x, :y
+  end
+  # Matriz dos botões
+  @clicked = []
+  @pressed = []
+  @dbl_clicked = []
+  @states = {}
+  # Chave dos botões
+  KEYS = {
+    :L => 1,
+    :R => 2,
+    :M => 4
+  }
+  # Esconde o cursor original
+  Win32API.new('user32', 'ShowCursor', 'i', 'i').call(0)
   # Win32 API
-  ScreenToClient = Win32API.new('user32', 'ScreenToClient', 'LP', 'I')
-  GetCursorPos = Win32API.new('user32', 'GetCursorPos', 'P', 'I')
-  GetPrivateProfileStringA = Win32API.new('kernel32', 'GetPrivateProfileStringA', 'PPPPLP', 'L')
-  FindWindowA = Win32API.new('user32', 'FindWindowA', 'PP', 'L')
+  ScreenToClient = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
+  GetCursorPos = Win32API.new('user32', 'GetCursorPos', 'p', 'i')
+  GetAsyncKeyState = Win32API.new('user32', 'GetAsyncKeyState', 'i', 'i')
+  GetKeyState = Win32API.new('user32', 'GetKeyState', 'i', 'i')
+  GetPrivateProfileStringA = Win32API.new('kernel32', 'GetPrivateProfileStringA', 'pppplp', 'l')
+  FindWindowA = Win32API.new('user32', 'FindWindowA', 'pp', 'l')
   #--------------------------------------------------------------------------
   # * Inicialização
   #--------------------------------------------------------------------------
@@ -35,7 +51,7 @@ module Mouse
   #--------------------------------------------------------------------------
   # * Obtenção da posição do cursor
   #--------------------------------------------------------------------------
-  def self.get_cursor_pos
+  def self.cursor_pos
     pos = [0, 0].pack('ll')
     GetCursorPos.call(pos)
     ScreenToClient.call(HWND, pos)
@@ -51,15 +67,72 @@ module Mouse
     FindWindowA.call('RGSS Player', game_name)
   end
   #--------------------------------------------------------------------------
+  # * Verifica se clicou uma vez
+  #     buttons : botões
+  #--------------------------------------------------------------------------
+  def self.click?(buttons)
+    if buttons.is_a?(Array)
+      buttons.any? { |button| click?(button) }
+    else
+      @clicked.include?(KEYS[buttons])
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Verifica se os botões estão sendo pressionandos
+  #     buttons : botões
+  #--------------------------------------------------------------------------
+  def self.press?(buttons)
+    if buttons.is_a?(Array)
+      buttons.any? { |button| press?(button) }
+    else
+      @pressed.include?(KEYS[buttons])
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Verifica se clicou duas vezes
+  #     buttons : botões
+  #--------------------------------------------------------------------------
+  def self.double_click?(buttons)
+    if buttons.is_a?(Array)
+      buttons.any? { |button| double_click?(button) }
+    else
+      @dbl_clicked.include?(KEYS[buttons])
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Atualização do frame
   #--------------------------------------------------------------------------
   def self.update
-    @x, @y = *get_cursor_pos
+    @x, @y = *cursor_pos
     @cursor_sprite.x = @x
     @cursor_sprite.y = @y
+    update_states
+  end
+  #--------------------------------------------------------------------------
+  # * Atualização do estado dos botões
+  #--------------------------------------------------------------------------
+  def self.update_states
+    @clicked.clear
+    @pressed.clear
+    @dbl_clicked.clear
+    # Checa apenas uma vez a cada frame se o botão
+    #foi ou está sendo pressionado
+    KEYS.each_value do |button|
+      clicked = (GetAsyncKeyState.call(button) & 0x01 == 1)
+      @clicked << button if clicked
+      @pressed << button if GetKeyState.call(button) > 1
+      if clicked && @states[button] > 0
+        @states[button] = 0
+        @dbl_clicked << button
+      elsif clicked
+        @states[button] = 1
+      else
+        @states[button] = @states.has_key?(button) && @states[button] > 0 && @states[button] < 17 ? @states[button] + 1 : 0
+      end
+    end
   end
   # Mantém a posição do mouse atualizada, inclusive
-  #quando pressionar F2
+  #quando o F2 for pressionado
   HWND = self.find_window
 end
 
@@ -72,18 +145,18 @@ class Sprite_Cursor < Sprite
   #--------------------------------------------------------------------------
   def initialize
     super
-    create_bitmap
+    self.bitmap = Bitmap.new(24, 24)
+    self.opacity = Mouse_Configs::CURSOR_OPACITY
+    self.z = 999
+    refresh
   end
   #--------------------------------------------------------------------------
-  # * Obtenção da posição do cursor
+  # * Renovação
   #--------------------------------------------------------------------------
-  def create_bitmap
-    self.bitmap = Bitmap.new(24, 24)
+  def refresh
     bitmap = Cache.system('Iconset')
     rect = Rect.new(Mouse_Configs::CURSOR_ICON % 16 * 24, Mouse_Configs::CURSOR_ICON / 16 * 24, 24, 24)
     self.bitmap.blt(0, 0, bitmap, rect)
-    self.opacity = Mouse_Configs::CURSOR_OPACITY
-    self.z = 999
   end
 end
 
@@ -113,7 +186,7 @@ class << DataManager
   #--------------------------------------------------------------------------
   def init
     # Inicializa o mouse quando iniciar o projeto e
-    #toda vez que pressionar F12
+    #toda vez que o F12 for pressionado
     Mouse.init
     dmouse_init
   end

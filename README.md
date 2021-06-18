@@ -6,6 +6,14 @@
 
 ## Class Method Summary
 ```
+.x ⇒ Object
+```
+Returns the current x coordinate of the mouse cursor on the screen.
+```
+.y ⇒ Object
+```
+Returns the current y coordinate of the mouse cursor on the screen.
+```
 .click?(buttons) ⇒ Boolean
 ```
 Returns if the given buttons were pressed once in the current frame.
@@ -19,6 +27,16 @@ Returns if the buttons provided are pressed in the current frame.
 Returns if the buttons provided were pressed twice.
 
 ## Class Attribute Details
+```
+.x ⇒ Object
+```
+Returns the current x coordinate of the mouse cursor on the screen.
+##
+```
+.y ⇒ Object
+```
+Returns the current y coordinate of the mouse cursor on the screen.
+##
 ```
 .click?(buttons) ⇒ Boolean
 ```

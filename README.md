@@ -26,7 +26,7 @@ Returns if the buttons provided are pressed in the current frame.
 ```
 Returns if the buttons provided were pressed twice.
 
-## Class Attribute Details
+## Class Method Details
 ```
 .x ⇒ Object
 ```

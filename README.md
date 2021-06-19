@@ -20,7 +20,7 @@ Returns the current y coordinate of the mouse cursor on the screen.
 ```
 Returns if the given buttons were pressed once in the current frame.
 
-<b>Parameters:</b>
+Parameters:
 | buttons               |
 |-----------------------|
 | Buttons to be checked. Valid values are `:L`, `:M` and `:R` |
@@ -30,7 +30,7 @@ Returns if the given buttons were pressed once in the current frame.
 ```
 Returns if the buttons provided are pressed in the current frame.
 
-<b>Parameters:</b>
+Parameters:
 
 | buttons               |
 |-----------------------|
@@ -41,7 +41,7 @@ Returns if the buttons provided are pressed in the current frame.
 ```
 Returns if the buttons provided were pressed twice.
 
-<b>Parameters:</b>
+Parameters:
 
 | buttons               |
 |-----------------------|

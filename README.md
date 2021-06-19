@@ -4,29 +4,7 @@
 ![lANG](https://img.shields.io/badge/LANG-RUBY(%20RGSS%20)-red?style=for-the-badge&logo=appveyo)
 <p>Mouse system for the RPG Maker VX Ace.</p>
 
-## Class Method Summary
-```
-.x ⇒ Object
-```
-Returns the current x coordinate of the mouse cursor on the screen.
-```
-.y ⇒ Object
-```
-Returns the current y coordinate of the mouse cursor on the screen.
-```
-.click?(buttons) ⇒ Boolean
-```
-Returns if the given buttons were pressed once in the current frame.
-```
-.press?(buttons) ⇒ Boolean
-```
-Returns if the buttons provided are pressed in the current frame.
-```
-.double_click?(buttons) ⇒ Boolean
-```
-Returns if the buttons provided were pressed twice.
-
-## Class Method Details
+## Class Method
 ```
 .x ⇒ Object
 ```

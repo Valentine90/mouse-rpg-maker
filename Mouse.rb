@@ -28,9 +28,9 @@ module Mouse
   @states = {}
   # Chave dos botões
   KEYS = {
-    :Left => 1,
-    :Right => 2,
-    :Middle => 4
+    :LEFT => 1,
+    :RIGHT => 2,
+    :MIDDLE => 4
   }
   # Esconde o cursor original
   Win32API.new('user32', 'ShowCursor', 'i', 'i').call(0)

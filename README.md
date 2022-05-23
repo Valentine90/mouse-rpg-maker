@@ -23,7 +23,7 @@ Returns if the given buttons were pressed once in the current frame.
 Parameters:
 | buttons               |
 |-----------------------|
-| Buttons to be checked. Valid values are `:LEFT`, `:MIDDLE` and `:RIGHT` |
+| Buttons to be checked. Valid values are `:left`, `:middle` and `:right` |
 ## 
 ```
 .press?(buttons) ⇒ Boolean
@@ -34,7 +34,7 @@ Parameters:
 
 | buttons               |
 |-----------------------|
-| Buttons to be checked. Valid values are `:LEFT`, `:MIDDLE` and `:RIGHT` |
+| Buttons to be checked. Valid values are `:left`, `:middle` and `:right` |
 ## 
 ```
 .double_click?(buttons) ⇒ Boolean
@@ -45,4 +45,4 @@ Parameters:
 
 | buttons               |
 |-----------------------|
-| Buttons to be checked. Valid values are `:LEFT`, `:MIDDLE` and `:RIGHT` |
+| Buttons to be checked. Valid values are `:left`, `:middle` and `:right` |

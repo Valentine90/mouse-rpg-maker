@@ -35,36 +35,18 @@ module Mouse
   # Esconde o cursor original
   Win32API.new('user32', 'ShowCursor', 'i', 'i').call(0)
   # Win32 API
-  ScreenToClient = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
-  GetCursorPos = Win32API.new('user32', 'GetCursorPos', 'p', 'i')
-  GetAsyncKeyState = Win32API.new('user32', 'GetAsyncKeyState', 'i', 'i')
-  GetKeyState = Win32API.new('user32', 'GetKeyState', 'i', 'i')
-  GetPrivateProfileStringA = Win32API.new('kernel32', 'GetPrivateProfileStringA', 'pppplp', 'l')
-  FindWindowA = Win32API.new('user32', 'FindWindowA', 'pp', 'l')
+  SCREEN_TO_CLIENT = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
+  GET_CURSOR_POS = Win32API.new('user32', 'GetCursorPos', 'p', 'i')
+  GET_ASYNC_KEY_STATE = Win32API.new('user32', 'GetAsyncKeyState', 'i', 'i')
+  GET_KEY_STATE = Win32API.new('user32', 'GetKeyState', 'i', 'i')
+  GET_PRIVATE_PROFILE_STRING_A = Win32API.new('kernel32', 'GetPrivateProfileStringA', 'pppplp', 'l')
+  FIND_WINDOW_A = Win32API.new('user32', 'FindWindowA', 'pp', 'l')
   #--------------------------------------------------------------------------
   # * Inicialização
   #--------------------------------------------------------------------------
   def self.init
     @cursor_sprite = Sprite_Cursor.new
     update
-  end
-  #--------------------------------------------------------------------------
-  # * Obtenção da posição do cursor
-  #--------------------------------------------------------------------------
-  def self.cursor_pos
-    pos = [0, 0].pack('ll')
-    GetCursorPos.call(pos)
-    ScreenToClient.call(HWND, pos)
-    pos.unpack('ll')
-  end
-  #--------------------------------------------------------------------------
-  # * Obtenção do identificador
-  #--------------------------------------------------------------------------
-  def self.find_window
-    game_name = "\0" * 256
-    GetPrivateProfileStringA.call('Game', 'Title', '', game_name, 255, ".\\Game.ini")
-    game_name.delete!("\0")
-    FindWindowA.call('RGSS Player', game_name)
   end
   #--------------------------------------------------------------------------
   # * Verifica se clicou uma vez
@@ -108,6 +90,7 @@ module Mouse
     @cursor_sprite.y = @y
     update_states
   end
+  private
   #--------------------------------------------------------------------------
   # * Atualização do estado dos botões
   #--------------------------------------------------------------------------
@@ -118,9 +101,9 @@ module Mouse
     # Checa apenas uma vez a cada frame se o botão
     #foi ou está sendo pressionado
     KEYS.each_value do |button|
-      clicked = (GetAsyncKeyState.call(button) & 0x01 == 1)
+      clicked = (GET_ASYNC_KEY_STATE.call(button) & 0x01 == 1)
       @clicked << button if clicked
-      @pressed << button if GetKeyState.call(button) > 1
+      @pressed << button if GET_KEY_STATE.call(button) > 1
       if clicked && @states[button] > 0
         @states[button] = 0
         @dbl_clicked << button
@@ -130,6 +113,24 @@ module Mouse
         @states[button] = @states.has_key?(button) && @states[button] > 0 && @states[button] < 17 ? @states[button] + 1 : 0
       end
     end
+  end
+  #--------------------------------------------------------------------------
+  # * Obtenção da posição do cursor
+  #--------------------------------------------------------------------------
+  def self.cursor_pos
+    pos = [0, 0].pack('ll')
+    GET_CURSOR_POS.call(pos)
+    SCREEN_TO_CLIENT.call(HWND, pos)
+    pos.unpack('ll')
+  end
+  #--------------------------------------------------------------------------
+  # * Obtenção do identificador
+  #--------------------------------------------------------------------------
+  def self.find_window
+    game_name = "\0" * 256
+    GET_PRIVATE_PROFILE_STRING_A.call('Game', 'Title', '', game_name, 255, ".\\Game.ini")
+    game_name.delete!("\0")
+    FIND_WINDOW_A.call('RGSS Player', game_name)
   end
   # Mantém a posição do mouse atualizada, inclusive
   #quando o F2 for pressionado

@@ -7,10 +7,10 @@
 #==============================================================================
 
 module Mouse_Configs
-  # Índice no IconSet.png do ícone do cursor
+  # Índice no IconSet.png do ícone do cursor.
   CURSOR_ICON = 147
   
-  # Opacidade do cursor (de 0 a 255)
+  # Opacidade do cursor (de 0 a 255).
   CURSOR_OPACITY = 255
 end
 
@@ -21,20 +21,20 @@ module Mouse
   class << self
     attr_reader   :x, :y
   end
-  # Matriz dos botões
+  # Matriz dos botões.
   @clicked = []
   @pressed = []
   @dbl_clicked = []
   @states = {}
-  # Chave dos botões
+  # Chave dos botões.
   KEYS = {
     :left => 1,
     :right => 2,
     :middle => 4
   }
-  # Esconde o cursor original
+  # Esconde o cursor original.
   Win32API.new('user32', 'ShowCursor', 'i', 'i').call(0)
-  # Win32 API
+  # Win32 API.
   SCREEN_TO_CLIENT = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
   GET_CURSOR_POS = Win32API.new('user32', 'GetCursorPos', 'p', 'i')
   GET_ASYNC_KEY_STATE = Win32API.new('user32', 'GetAsyncKeyState', 'i', 'i')
@@ -99,7 +99,7 @@ module Mouse
     @pressed.clear
     @dbl_clicked.clear
     # Checa apenas uma vez a cada frame se o botão
-    #foi ou está sendo pressionado
+    # foi ou está sendo pressionado.
     KEYS.each_value do |button|
       clicked = (GET_ASYNC_KEY_STATE.call(button) & 0x01 == 1)
       @clicked << button if clicked
@@ -133,7 +133,7 @@ module Mouse
     FIND_WINDOW_A.call('RGSS Player', game_name)
   end
   # Mantém a posição do mouse atualizada, inclusive
-  #quando o F2 for pressionado
+  # quando o F2 for pressionado.
   HWND = self.find_window
 end
 
@@ -187,7 +187,7 @@ class << DataManager
   #--------------------------------------------------------------------------
   def init
     # Inicializa o mouse quando iniciar o projeto e
-    #toda vez que o F12 for pressionado
+    # toda vez que o F12 for pressionado.
     Mouse.init
     dmouse_init
   end

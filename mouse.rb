@@ -9,7 +9,7 @@
 module Mouse_Configs
   # Índice no IconSet.png do ícone do cursor.
   CURSOR_ICON = 147
-  
+
   # Opacidade do cursor (de 0 a 255).
   CURSOR_OPACITY = 255
 end
